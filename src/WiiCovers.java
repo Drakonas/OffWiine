@@ -14,19 +14,27 @@ import java.io.File;
 
 public class WiiCovers {
 
-    private static String[] coverTypes = {"coverfullHQ", "coverfull", "cover", "cover3D", "disc", "disccustom"};
-    public static String[] coverFolders = {"boxcovers/", "boxcovers/", "covers/", "covers3D/", "discs/", "discs/"};
-    private static Scanner keyboard = new Scanner(System.in);
+    public String[] coverTypes = null;
+    public String[] coverFolders = null;
+    private Scanner keyboard = new Scanner(System.in);
+
+    /** Default Constructor
+     * 
+     */
+    public WiiCovers() {
+	coverTypes = new String[] {"coverfullHQ", "coverfull", "cover", "cover3D", "disc", "disccustom"};
+	coverFolders = new String[] {"boxcovers/", "boxcovers/", "covers/", "covers3D/", "discs/", "discs/"};
+    }
 
     /** Creates a directory, if not already created
      * <p>Original script written by S.&nbsp;Dileep Kumar
-     * <p>Edited to take a parameter
+     * <p>Edited by adding parameter usage
 
     @param	directory	the directory to create
      *
 
      */
-    public static void mkDir(String directory) {
+    public void mkDir(String directory) {
 	File f = new File(directory);
 	boolean exists = true;
 
@@ -45,7 +53,13 @@ public class WiiCovers {
 	return;
     }
 
-    public static boolean checkID(String gameid) {
+    /** Makes sure that the Game ID is in the correct format
+     *
+     *
+     * @param gameid	the Game ID to check
+     * @return	true if Game ID is correctly formatted, false if not
+     */
+    public boolean checkID(String gameid) {
 	if (gameid.matches("[a-zA-Z_0-9][a-zA-Z_0-9][a-zA-Z_0-9][EJKTPR][a-zA-Z_0-9][a-zA-Z_0-9]") || gameid.matches("[a-zA-Z_0-9][a-zA-Z_0-9][a-zA-Z_0-9][EJKTPRA]")) {
 	    return true;
 	}
@@ -54,28 +68,28 @@ public class WiiCovers {
 
     /**
      * Obtains and saves the PNG image for the specified game and image type
-     * <p>If the high quality full cover does not exist, the user will be asked if they wish to try downloading the standard full cover.
-     * <p>Likewise, if the disc image does not exist, the user will be asked if they wish to try downloading the alternate disc image.
-     * <p>
+     * <TT>If the high quality full cover does not exist, the user will be asked if they wish to try downloading the standard full cover.
+     * <TT>Likewise, if the disc image does not exist, the user will be asked if they wish to try downloading the alternate disc image.
+     *
      * <p>This is also a re-write of the simple image-saving method, originally written by Deron Eriksson.
 
     @param	gameid	the 6 or 4 digit ID of the game/channel
      * <p>Example 1: SMNE01
-     * <p>Example 2: HAPE
+     * <TT>Example 2: HAPE
 
     @param	type	the type of cover to download
      * <p>Example: 0 (High quality full cover)
-     * <p>
+     * 
      * <p>Cover types:
-     * <p>0: HQ Full Cover
-     * <p>1: Standard Full Cover
-     * <p>2: Front Cover
-     * <p>3: 3D Cover
-     * <p>4: Disc
-     * <p>5: Custom/Alternate Disc
+     * <TT>0: HQ Full Cover
+     * <TT>1: Standard Full Cover
+     * <TT>2: Front Cover
+     * <TT>3: 3D Cover
+     * <TT>4: Disc
+     * <TT>5: Custom/Alternate Disc
 
      */
-    public static void saveCover(String gameid, int type) {
+    public void saveCover(String gameid, int type) {
 	URL url = null;
 	InputStream is = null;
 	int typeTest = type;
@@ -85,19 +99,6 @@ public class WiiCovers {
 	    is = url.openStream();
 	} catch (java.io.FileNotFoundException coverNotFoundError) {
 	    throw new EmptyStackException();
-//	    if (type == 0)
-//		return "0";
-//	    else if (type == 1) {
-//		throw new EmptyStackException(); //"Error: Standard cover not found. Perhaps the game doesn't exist yet?";
-//	    }
-//	    else if (type > 1 && type < 4)
-//		return "Error: Cover not found. Perhaps it doesnt exist yet?";
-//	    else if (type == 4)
-//		return "4";
-//	    else if (type == 5)
-//		return "Error: Disc image not found. Perhaps it doesnt exist yet?";
-//	    else
-//		return "IO Error: Cover type format incorrect";
 	} catch (java.net.MalformedURLException e) {
 	    log("Error: MalformedURLException");
 	} catch (java.io.IOException e) {
@@ -154,7 +155,7 @@ public class WiiCovers {
      * <p>Returns in the format of http://wiitdb.com/wiitdb/artwork/-COVER_TYPE-/-COUNTRY_CODE-/-GAME_ID-.png
 
      */
-    public static String getCoverURL(String gameid, int coverType) {
+    public String getCoverURL(String gameid, int coverType) {
 	String langs = "EJKTPRAI";
 	String langs2 = "USJAKOZHENRUENEN";
 	int langTest = langs.indexOf(gameid.charAt(3)) * 2;
@@ -164,30 +165,5 @@ public class WiiCovers {
     private static void log(Object aObject){
     System.out.println(String.valueOf(aObject));
     }
-
-    // Objects to throw
-//    public static Throwable coverNotFound0() {
-//	return new Throwable("Exception: High quality cover not found");
-//    }
-//
-//    public static Throwable coverNotFound1() {
-//	return new Throwable("Exception: High quality cover not found");
-//    }
-//
-//    public static Throwable coverNotFound2() {
-//	return new Throwable("Exception: High quality cover not found");
-//    }
-//
-//    public static Throwable coverNotFound3() {
-//	return new Throwable("Exception: High quality cover not found");
-//    }
-//
-//    public static Throwable coverNotFound4() {
-//	return new Throwable("Exception: High quality cover not found");
-//    }
-//
-//    public static Throwable coverNotFound5() {
-//	return new Throwable("Exception: High quality cover not found");
-//    }
 
 }

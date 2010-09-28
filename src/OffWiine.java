@@ -18,6 +18,7 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Image;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -55,8 +56,9 @@ import javax.swing.JOptionPane;
  @author Drakonas
  */
 public class OffWiine extends javax.swing.JFrame {
-    private String[] failStrings = new String[]{"HQ full cover not found","Standard full cover not found","Front cover not found","3D cover not found","Original disc not found","Alternate/custom disc not found"};
-    private File currentDir = null;
+    WiiCovers coverUtil = new WiiCovers();
+    String[] failStrings = new String[]{"HQ full cover not found","Standard full cover not found","Front cover not found","3D cover not found","Original disc not found","Alternate/custom disc not found"};
+    File currentDir = null;
     Image appIcon = createImageIcon("images/icon.png", "This is the application icon.").getImage();
 
     /** Creates new form OffWiine */
@@ -440,7 +442,7 @@ public class OffWiine extends javax.swing.JFrame {
 	    return;
 	}
 	// Check to make sure game ID is not incorrectly stated
-	if (!WiiCovers.checkID(gameID)) {
+	if (!coverUtil.checkID(gameID)) {
 	    log("Error: Game ID format incorrect");
 	    statusLabel.setText("Error: Game ID format incorrect");
 	    return;
@@ -464,7 +466,7 @@ public class OffWiine extends javax.swing.JFrame {
 
 	// First trial
 	try {
-	    WiiCovers.saveCover(gameID, coverType);
+	    coverUtil.saveCover(gameID, coverType);
 	    
 	} catch (EmptyStackException coverNotFoundException) {
 	    returnString = failStrings[coverType];
@@ -485,13 +487,16 @@ public class OffWiine extends javax.swing.JFrame {
 		JOptionPane.YES_NO_OPTION,
 		JOptionPane.ERROR_MESSAGE);
 	    }
+	    else {
+		returnString = "Error: " + failStrings[coverType];
+	    }
 	    // Second, optional trial
 	    if (coverNotFound == 0) {
 		coverType++;
 		try {
-		    WiiCovers.saveCover(gameID, coverType);
+		    coverUtil.saveCover(gameID, coverType);
 		} catch (EmptyStackException coverNotFoundException2) {
-		    returnString = failStrings[coverType];
+		    returnString = "Error: " + failStrings[coverType];
 		}
 	    }
 
@@ -501,25 +506,25 @@ public class OffWiine extends javax.swing.JFrame {
 	    return;
 	}
 	// Check if the game's cover/disc image is already downloaded
-	boolean exists = (new File(WiiCovers.coverFolders[2] + gameID + ".png")).exists();
+	boolean exists = (new File("covers/" + gameID + ".png")).exists();
 	if (exists) {
-	    log(gameID + ".png exists. Reading from file...");
-	    imageLabel1.setIcon(new ImageIcon(WiiCovers.coverFolders[2] + gameID + ".png"));
+	    log("covers/" + gameID + ".png exists. Reading from file...");
+	    imageLabel1.setIcon(new ImageIcon("covers/" + gameID + ".png"));
 	} else {
 	    log("Buffering image to display from URL...");
 	    URL url = null;
 	    // Try to get the URL
 	    try {
-		url = new URL(WiiCovers.getCoverURL(gameID, 2));
+		url = new URL(coverUtil.getCoverURL(gameID, 2));
 		imageLabel1.setIcon(new ImageIcon(url));
 	    } catch (MalformedURLException ex) {
 		// Failed to find image, sets the image displayed to the default
-		log("Error: Front cover not found, displaying main image");
+		log("Error: Front cover not found, displaying default image");
 		imageLabel1.setIcon(new ImageIcon(getClass().getResource("images/dl-not.png")));
 		return;
 	    }
 	    // Displays the success in statusLabel and the prompt
-	    returnString = "Saved to " + WiiCovers.coverFolders[coverType] + gameID + ".png";
+	    returnString = "Saved to " + coverUtil.coverFolders[coverType] + gameID + ".png";
 	    statusLabel.setText(returnString);
 	    log(returnString);
 	}
@@ -528,8 +533,20 @@ public class OffWiine extends javax.swing.JFrame {
     /**
      *
      */
-    public void parseText() {
+    public String parseText() {
+	ReadWithScanner parser = new ReadWithScanner(textFileField.getText());
+	try {
+	    parser.processLineByLine();
+	} catch (EmptyStackException ex){
 
+	} catch (FileNotFoundException e2) {
+
+	}
+
+	log("Done.");
+
+
+	return " ";
     }
 
     /** Displays a string or value as a line in prompt
@@ -543,14 +560,16 @@ public class OffWiine extends javax.swing.JFrame {
     /** Gets the current directory and returns it
      @return	The current directory
      */
-    public String getCurrentDirectory() {
+    public final String getCurrentDirectory() {
 	File dir = new File (".");
+	String returnDir = null;
 	try {
-	    return dir.getCanonicalPath();
+	    returnDir = dir.getCanonicalPath();
 	} catch (IOException ex) {
 	    log("Error getting current directory");
+	    returnDir = ".";
 	}
-	return ".";
+	return returnDir;
     }
 
     /** Creates an ImageIcon from a resource within the source packages

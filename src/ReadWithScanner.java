@@ -55,6 +55,8 @@ public final class ReadWithScanner {
   }
    */
 
+    private String[] gameIDs = null;
+
   /**
   * @param aFileName full name of an existing, readable file.
   */
@@ -67,8 +69,16 @@ public final class ReadWithScanner {
     Scanner scanner = new Scanner(fFile);
     try {
       //first use a Scanner to get each line
-      while ( scanner.hasNextLine() ){
-        processLine( scanner.nextLine() );
+      String[] returnArray = null;
+	while ( scanner.hasNextLine() ){
+	    returnArray = processLine( scanner.nextLine() );
+	    if (returnArray[1].equals(" ") && returnArray[2].equals(" ")) {
+		throw new java.util.EmptyStackException();
+	    }
+	    else {
+		gameIDs[1] = returnArray[1];
+		gameIDs[2] = returnArray[2];
+	    }
       }
     }
     finally {
@@ -87,20 +97,24 @@ public final class ReadWithScanner {
   * <tt>disposition =  "grumpy"</tt>
   * <tt>this is the name = this is the value</tt>
   */
-  protected void processLine(String aLine){
+  private String[] processLine(String aLine) {
     //use a second Scanner to parse the content of each line
     Scanner scanner = new Scanner(aLine);
     scanner.useDelimiter("=");
+    String[] returnArray = null;
     if ( scanner.hasNext() ){
+      String gameID = scanner.next();
       String name = scanner.next();
-      String value = scanner.next();
-      log("Name is : " + quote(name.trim()) + ", and Value is : " + quote(value.trim()) );
+      log("ID: '" + quote(gameID.trim()) + "', Game: " + quote(gameID.trim()) );
+      returnArray = new String[] {quote(gameID.trim()),quote(name.trim())};
     }
     else {
       log("Empty or invalid line. Unable to process.");
+      returnArray = new String[] {" "," "};
     }
     //(no need for finally here, since String is source)
     scanner.close();
+    return returnArray;
   }
 
   // PRIVATE //
