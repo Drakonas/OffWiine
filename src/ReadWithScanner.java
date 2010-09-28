@@ -44,6 +44,7 @@
  */
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public final class ReadWithScanner {
@@ -54,38 +55,47 @@ public final class ReadWithScanner {
     log("Done.");
   }
    */
-
-    private String[] gameIDs = null;
+    private ArrayList <String>gameIDs = null;
+    private ArrayList <String>gameNames = null;
 
   /**
   * @param aFileName full name of an existing, readable file.
   */
-  public ReadWithScanner(String aFileName){
-    fFile = new File(aFileName);
-  }
+    public ReadWithScanner(String aFileName){
+	fFile = new File(aFileName);
+	gameIDs = new <String>ArrayList();
+	gameNames = new <String>ArrayList();
+    }
 
-  /** Template method that calls {@link #processLine(String)}.  */
-  public final void processLineByLine() throws FileNotFoundException {
-    Scanner scanner = new Scanner(fFile);
-    try {
-      //first use a Scanner to get each line
-      String[] returnArray = null;
-	while ( scanner.hasNextLine() ){
-	    returnArray = processLine( scanner.nextLine() );
-	    if (returnArray[1].equals(" ") && returnArray[2].equals(" ")) {
-		throw new java.util.EmptyStackException();
-	    }
-	    else {
-		gameIDs[1] = returnArray[1];
-		gameIDs[2] = returnArray[2];
-	    }
-      }
+  /** Template method that calls {@link #processLine(String)}. 
+   * <TT>Every time a line is processed, the Game ID and Game name is added to
+   * 
+   */
+    public final void processLineByLine() throws FileNotFoundException {
+	Scanner scanner = new Scanner(fFile);
+	try {
+	    //first use a Scanner to get each line
+	    String[] returnArray = null;
+	    int count = -1;
+		while ( scanner.hasNextLine() ) {
+		    count++;
+		    returnArray = processLine( scanner.nextLine() );
+		    if (returnArray[1].equals(" ") && returnArray[2].equals(" ")) {
+			// Continue
+
+			//// throw new java.util.EmptyStackException();
+		    }
+		    else {
+		    gameIDs.add(returnArray[1]);
+		    gameNames.add(returnArray[2]);
+		    }
+		}
+	}
+	finally {
+	    //ensure the underlying stream is always closed
+	    scanner.close();
+	}
     }
-    finally {
-      //ensure the underlying stream is always closed
-      scanner.close();
-    }
-  }
 
   /**
   * Overridable method for processing lines in different ways.
