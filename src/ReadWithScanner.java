@@ -47,34 +47,41 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/** A class used for parsing text files line by line, reading game IDs and
+ * game names from each line.
+ *
+ * @author Drakonas
+ */
 public final class ReadWithScanner {
+    /** An {@link ArrayList} used by {@link #processLineByLine()} to contain
+     * game IDs. (later used in OffWiine.chooseGameFrame)
+     */
+    public ArrayList<String> gameIDs = null;
+    /** An {@link ArrayList} used by {@link #processLineByLine()} to contain
+     * game names. (later used in OffWiine.chooseGameFrame)
+     */
+    public ArrayList<String> gameNames = null;
 
-  /*public static void main(String... aArgs) throws FileNotFoundException {
-    ReadWithScanner parser = new ReadWithScanner("C:\\Temp\\test.txt");
-    parser.processLineByLine();
-    log("Done.");
-  }
-   */
-    private ArrayList <String>gameIDs = null;
-    private ArrayList <String>gameNames = null;
-
-  /**
+  /** Constructor
   * @param aFileName full name of an existing, readable file.
   */
     public ReadWithScanner(String aFileName){
 	fFile = new File(aFileName);
-	gameIDs = new <String>ArrayList();
-	gameNames = new <String>ArrayList();
+	gameIDs = new ArrayList<String>(gameIDs);
+	gameNames = new ArrayList<String>(gameNames);
     }
 
   /** Template method that calls {@link #processLine(String)}. 
-   * <TT>Every time a line is processed, the Game ID and Game name is added to
-   * 
+   * <p>Every time a line is processed, the game ID and game name is added to
+   * the private variables, gameIDs and gameNames, respectively.
+   *
+   @throws java.io.FileNotFoundException
    */
     public final void processLineByLine() throws FileNotFoundException {
 	Scanner scanner = new Scanner(fFile);
 	try {
-	    //first use a Scanner to get each line
+	    // Use a Scanner to get each line, reading the returned array's
+	    // values and placing them in gameIDs and gameNames, separately
 	    String[] returnArray = null;
 	    int count = -1;
 		while ( scanner.hasNextLine() ) {
@@ -82,8 +89,6 @@ public final class ReadWithScanner {
 		    returnArray = processLine( scanner.nextLine() );
 		    if (returnArray[1].equals(" ") && returnArray[2].equals(" ")) {
 			// Continue
-
-			//// throw new java.util.EmptyStackException();
 		    }
 		    else {
 		    gameIDs.add(returnArray[1]);
@@ -92,21 +97,20 @@ public final class ReadWithScanner {
 		}
 	}
 	finally {
-	    //ensure the underlying stream is always closed
+	    // Ensure the underlying stream is always closed
 	    scanner.close();
 	}
     }
 
   /**
-  * Overridable method for processing lines in different ways.
-  *
-  * <P>This simple default implementation expects simple name-value pairs, separated by an
-  * '=' sign. Examples of valid input :
-  * <tt>height = 167cm</tt>
-  * <tt>mass =  65kg</tt>
-  * <tt>disposition =  "grumpy"</tt>
-  * <tt>this is the name = this is the value</tt>
-  */
+   * Method for processing line of input (used in {@link #processLineByLine()}).
+   *
+   * <P>This method processes a {@link Scanner} object, expecting simple
+   * gameID-gameName pairs, separated by an '=' sign. Examples of valid input:
+   * <p>RSBE01 = SSBB</tt>
+   * <p>Note: The name of the game does not matter. This is what is displayed
+   * to a user when the OffWiine.chooseGameFrame frame is displayed
+   */
   private String[] processLine(String aLine) {
     //use a second Scanner to parse the content of each line
     Scanner scanner = new Scanner(aLine);

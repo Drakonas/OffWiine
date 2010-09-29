@@ -60,6 +60,7 @@ public class OffWiine extends javax.swing.JFrame {
     String[] failStrings = new String[]{"HQ full cover not found","Standard full cover not found","Front cover not found","3D cover not found","Original disc not found","Alternate/custom disc not found"};
     File currentDir = null;
     Image appIcon = createImageIcon("images/icon.png", "This is the application icon.").getImage();
+    String textFileLocation = null;
 
     /** Creates new form OffWiine */
     public OffWiine() {
@@ -386,7 +387,8 @@ public class OffWiine extends javax.swing.JFrame {
 		File textFile = textFileBrowser.getSelectedFile();
 		textFileField.setText(textFile.getPath());
 		textFileField.setToolTipText(textFile.getPath());
-		statusLabel.setText("Opened: " + textFile.getName() + ".");
+		textFileLocation = textFile.getName();
+		statusLabel.setText("Opened: " + textFileLocation + ".");
 		textFileRadio.setSelected(true);
 		gameChooseButton.setEnabled(true);
 	    } else {
@@ -530,30 +532,34 @@ public class OffWiine extends javax.swing.JFrame {
 	}
     }
 
-    /**
+    /** Parse a text file line by line, reading the game ID and game name
      *
      */
     public String parseText() {
-	ReadWithScanner parser = new ReadWithScanner(textFileField.getText());
+	ReadWithScanner parser = new ReadWithScanner(textFileLocation);
+	log("Parsing text file...");
+	// Parse the text file, line by line, catching a FileNotFound Exception
 	try {
 	    parser.processLineByLine();
-	} catch (EmptyStackException ex){
-
 	} catch (FileNotFoundException e2) {
-
+	    log("Error: " + textFileLocation + " not found");
+	    return "0";
 	}
-
+	// Read the data from gameNames and return a string that is used for
+	// displaying the list in the frame, chooseGameFrame.
+	String returnString = parser.gameIDs.get(0);
+	for (int n = 1;n < parser.gameIDs.size();n++)
+	    returnString += "," + parser.gameIDs.get(n);
+	log(returnString);
 	log("Done.");
-
-
-	return " ";
+	return returnString;
     }
 
     /** Displays a string or value as a line in prompt
      *
      * @param aObject The string/value to display
      */
-    private static void log(Object aObject){
+    private static void log(Object aObject) {
     System.out.println(String.valueOf(aObject));
     }
 

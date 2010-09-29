@@ -68,25 +68,25 @@ public class WiiCovers {
 
     /**
      * Obtains and saves the PNG image for the specified game and image type
-     * <TT>If the high quality full cover does not exist, the user will be asked if they wish to try downloading the standard full cover.
-     * <TT>Likewise, if the disc image does not exist, the user will be asked if they wish to try downloading the alternate disc image.
+     * <tt>If the high quality full cover does not exist, the user will be asked if they wish to try downloading the standard full cover.
+     * <tt>Likewise, if the disc image does not exist, the user will be asked if they wish to try downloading the alternate disc image.
      *
      * <p>This is also a re-write of the simple image-saving method, originally written by Deron Eriksson.
 
     @param	gameid	the 6 or 4 digit ID of the game/channel
      * <p>Example 1: SMNE01
-     * <TT>Example 2: HAPE
+     * <tt>Example 2: HAPE
 
     @param	type	the type of cover to download
      * <p>Example: 0 (High quality full cover)
      * 
      * <p>Cover types:
-     * <TT>0: HQ Full Cover
-     * <TT>1: Standard Full Cover
-     * <TT>2: Front Cover
-     * <TT>3: 3D Cover
-     * <TT>4: Disc
-     * <TT>5: Custom/Alternate Disc
+     * <tt>0: HQ Full Cover
+     * <tt>1: Standard Full Cover
+     * <tt>2: Front Cover
+     * <tt>3: 3D Cover
+     * <tt>4: Disc
+     * <tt>5: Custom/Alternate Disc
 
      */
     public void saveCover(String gameid, int type) {
@@ -137,19 +137,19 @@ public class WiiCovers {
      * For use with WiiTDB URLs only
 
     @param	gameid	the 6 or 4 digit ID of the game/channel
-     * Example 1: SMNE01
-     * Example 2: HAPE
+     * <p>Example 1: SMNE01
+     * <tt>Example 2: HAPE
 
     @param	coverType	the type of cover to download
      * <p>Example: 0 (High quality full cover)
-     * <p>
+     * 
      * <p>Cover types:
-     * <p>0: HQ Full Cover
-     * <p>1: Standard Full Cover
-     * <p>2: Front Cover
-     * <p>3: 3D Cover
-     * <p>4: Disc
-     * <p>5: Custom/Alternate Disc
+     * <tt>0: HQ Full Cover
+     * <tt>1: Standard Full Cover
+     * <tt>2: Front Cover
+     * <tt>3: 3D Cover
+     * <tt>4: Disc
+     * <tt>5: Custom/Alternate Disc
 
     @return	the cover URL
      * <p>Returns in the format of http://wiitdb.com/wiitdb/artwork/-COVER_TYPE-/-COUNTRY_CODE-/-GAME_ID-.png
