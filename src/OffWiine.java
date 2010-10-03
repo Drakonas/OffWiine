@@ -1,33 +1,26 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * OffWiine.java
- *
- * Created on Sep 20, 2010, 12:49:57 AM
- */
-
-/**
+/** OffWiine - Interface
  *
  * @author Nathan Dick
  */
 
-import java.awt.Cursor;
-import java.awt.Desktop;
-import java.awt.Image;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+//import java.awt.Cursor;
+//import java.awt.Desktop;
+//import java.awt.Image;
+//import java.io.File;
+//import java.io.FileNotFoundException;
+//import java.io.IOException;
+//import java.net.MalformedURLException;
+//import java.net.URL;
 import java.util.EmptyStackException;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.UIManager;
-import javax.swing.JOptionPane;
+//import javax.swing.DefaultListModel;
+//import javax.swing.ImageIcon;
+//import javax.swing.JFileChooser;
+//import javax.swing.UIManager;
+//import javax.swing.JOptionPane;
+import java.awt.*;
+import java.io.*;
+import java.net.*;
+import javax.swing.*;
 
 /** OffWiine is for downloading all current types of Wii game covers.
 
