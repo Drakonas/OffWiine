@@ -1,15 +1,21 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/** OffWiine - Text Parser
+ * Copyright (C) 2010  Nathan Dick
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
 
-/**
- * @(#)ReadWithScanner.java
- *
- *  application
- *
- * @author Drakonas
- * @version 1.00 Sep 20, 2010
+@author Drakonas
  */
 
 /*
@@ -53,6 +59,8 @@ import java.util.Scanner;
  * @author Drakonas
  */
 public final class ReadWithScanner {
+    private File fFile;
+
     /** An {@link ArrayList} used by {@link #processLineByLine()} to contain
      * game IDs. (later used in OffWiine.chooseGameFrame)
      */
@@ -67,8 +75,8 @@ public final class ReadWithScanner {
   */
     public ReadWithScanner(String aFileName){
 	fFile = new File(aFileName);
-	gameIDs = new ArrayList<String>(gameIDs);
-	gameNames = new ArrayList<String>(gameNames);
+	gameIDs = new ArrayList<String>();
+	gameNames = new ArrayList<String>();
     }
 
   /** Template method that calls {@link #processLine(String)}. 
@@ -78,7 +86,13 @@ public final class ReadWithScanner {
    @throws java.io.FileNotFoundException
    */
     public final void processLineByLine() throws FileNotFoundException {
-	Scanner scanner = new Scanner(fFile);
+	Scanner scanner = null;
+	try {
+	    scanner = new Scanner(fFile);
+	} catch (IOException ex) {
+	    log("Error: IOException");
+	    throw new java.util.EmptyStackException();
+	}
 	try {
 	    // Use a Scanner to get each line, reading the returned array's
 	    // values and placing them in gameIDs and gameNames, separately
@@ -87,12 +101,12 @@ public final class ReadWithScanner {
 		while ( scanner.hasNextLine() ) {
 		    count++;
 		    returnArray = processLine( scanner.nextLine() );
-		    if (returnArray[1].equals(" ") && returnArray[2].equals(" ")) {
+		    if (returnArray[0].equals(" ") && returnArray[1].equals(" ")) {
 			// Continue
 		    }
 		    else {
-		    gameIDs.add(returnArray[1]);
-		    gameNames.add(returnArray[2]);
+		    gameIDs.add(returnArray[0]);
+		    gameNames.add(returnArray[1]);
 		    }
 		}
 	}
@@ -119,20 +133,21 @@ public final class ReadWithScanner {
     if ( scanner.hasNext() ){
       String gameID = scanner.next();
       String name = scanner.next();
-      log("ID: '" + quote(gameID.trim()) + "', Game: " + quote(gameID.trim()) );
-      returnArray = new String[] {quote(gameID.trim()),quote(name.trim())};
+      if (gameID.length() == 8)
+	  gameID = gameID.substring(1);
+      log("ID: " + gameID.trim() + ", Game: " + name.trim());
+      returnArray = new String[] {gameID.trim(),name.trim()};
     }
     else {
       log("Empty or invalid line. Unable to process.");
-      returnArray = new String[] {" "," "};
+      returnArray = new String[] {" "};
     }
     //(no need for finally here, since String is source)
     scanner.close();
     return returnArray;
   }
-
-  // PRIVATE //
-  private final File fFile;
+  
+  
 
   private static void log(Object aObject){
     System.out.println(String.valueOf(aObject));

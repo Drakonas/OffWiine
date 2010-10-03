@@ -1,7 +1,24 @@
+/** OffWiine - Cover Utilities
+ * 
+ @author Drakonas
+ */
 
-
-/**
-@author Drakonas
+/*
+ * Copyright (C) 2010  Nathan Dick
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,9 +35,7 @@ public class WiiCovers {
     public String[] coverFolders = null;
     private Scanner keyboard = new Scanner(System.in);
 
-    /** Default Constructor
-     * 
-     */
+    /** Default Constructor */
     public WiiCovers() {
 	coverTypes = new String[] {"coverfullHQ", "coverfull", "cover", "cover3D", "disc", "disccustom"};
 	coverFolders = new String[] {"boxcovers/", "boxcovers/", "covers/", "covers3D/", "discs/", "discs/"};
@@ -28,7 +43,7 @@ public class WiiCovers {
 
     /** Creates a directory, if not already created
      * <p>Original script written by S.&nbsp;Dileep Kumar
-     * <p>Edited by adding parameter usage
+     * <p>Edited for use with project
 
     @param	directory	the directory to create
      *
@@ -54,7 +69,6 @@ public class WiiCovers {
     }
 
     /** Makes sure that the Game ID is in the correct format
-     *
      *
      * @param gameid	the Game ID to check
      * @return	true if Game ID is correctly formatted, false if not
@@ -105,7 +119,6 @@ public class WiiCovers {
 	    log("Error: IOException");
 	}
 	mkDir(coverFolders[type]);
-
 	// Save stream to file
 	OutputStream os = null;
 	try {
@@ -127,8 +140,6 @@ public class WiiCovers {
 	} catch (java.io.IOException e) {
 	    log("Error: IOException");
 	}
-
-	// return "Saved to " + coverFolders[type] + gameid + ".png";
     }
 
     /**
@@ -165,5 +176,4 @@ public class WiiCovers {
     private static void log(Object aObject){
     System.out.println(String.valueOf(aObject));
     }
-
 }

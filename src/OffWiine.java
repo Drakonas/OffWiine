@@ -11,7 +11,7 @@
 
 /**
  *
- * @author Drakonas
+ * @author Nathan Dick
  */
 
 import java.awt.Cursor;
@@ -23,44 +23,38 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.EmptyStackException;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 import javax.swing.JOptionPane;
 
-/** This program is for downloading all current types of Wii game covers.
- * This project was made mainly for those who don't have Wii's connected to the
- * Internet. Clearly, the easiest way to get covers for USB Loaders,
- * in general, is by downloading them directly to the SD card using those
- * respected loaders; hence, I created this program.
- *
- * <p> This is my first program release, and I want it to be a useful one.
- * Because there were no WBFS managers out there that supported full,
- * high quality covers, I decided to take it into my own hands and
- * create the program myself.
- *
- * <p>I chose Java mainly because it is the first language I have grown
- * accustomed to (and the only one I have taken classes for, in college.
- * Of course, it is also because I wanted to make it cross-platform supportive,
- * and I thought the easiest way to do that was to create it in Java.
- *
- * <p>I hope you like the program, and I hope that people will take the source,
- * and put it to good use. Before I even started I knew I was going to make it
- * open-source, simply because I believe it's not giving to the community,
- * unless you give the community the tools to build upon what you have given
- * them.
- *
- * <p>Thanks,
- * <p>&nbsp;&nbsp;Drakonas
+/** OffWiine is for downloading all current types of Wii game covers.
 
- @author Drakonas
+ * Copyright (C) 2010  Nathan Dick
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+
+ @author Nathan Dick
  */
 public class OffWiine extends javax.swing.JFrame {
     WiiCovers coverUtil = new WiiCovers();
     String[] failStrings = new String[]{"HQ full cover not found","Standard full cover not found","Front cover not found","3D cover not found","Original disc not found","Alternate/custom disc not found"};
     File currentDir = null;
     Image appIcon = createImageIcon("images/icon.png", "This is the application icon.").getImage();
-    String textFileLocation = null;
+    DefaultListModel gameListModel = new DefaultListModel();
 
     /** Creates new form OffWiine */
     public OffWiine() {
@@ -103,10 +97,13 @@ public class OffWiine extends javax.swing.JFrame {
         dialogFrame = new javax.swing.JFrame();
         inputTypeRadioGroup = new javax.swing.ButtonGroup();
         chooseGameFrame = new javax.swing.JFrame();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        gameDialog = new javax.swing.JDialog();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        gameList = new javax.swing.JList();
+        massDownloadButton = new javax.swing.JButton();
+        gameCancelButton = new javax.swing.JButton();
         gameIDTextfield = new javax.swing.JTextField();
         gameIDLabel = new javax.swing.JLabel();
         coverTypeLabel = new javax.swing.JLabel();
@@ -160,8 +157,6 @@ public class OffWiine extends javax.swing.JFrame {
 
         chooseGameFrame.setTitle("Choose Game(s)");
 
-        jScrollPane1.setViewportView(jList1);
-
         jButton1.setText("Download Covers");
 
         jButton2.setText("Cancel");
@@ -171,25 +166,53 @@ public class OffWiine extends javax.swing.JFrame {
         chooseGameFrameLayout.setHorizontalGroup(
             chooseGameFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(chooseGameFrameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(chooseGameFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, chooseGameFrameLayout.createSequentialGroup()
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1)))
-                .addContainerGap())
+                .addContainerGap(424, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addGap(18, 18, 18))
         );
         chooseGameFrameLayout.setVerticalGroup(
             chooseGameFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(chooseGameFrameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 382, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addGap(411, 411, 411)
                 .addGroup(chooseGameFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
                 .addContainerGap())
+        );
+
+        jScrollPane1.setViewportView(gameList);
+
+        massDownloadButton.setText("Download...");
+
+        gameCancelButton.setText("Cancel");
+
+        javax.swing.GroupLayout gameDialogLayout = new javax.swing.GroupLayout(gameDialog.getContentPane());
+        gameDialog.getContentPane().setLayout(gameDialogLayout);
+        gameDialogLayout.setHorizontalGroup(
+            gameDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, gameDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(gameDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE)
+                    .addGroup(gameDialogLayout.createSequentialGroup()
+                        .addComponent(gameCancelButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(massDownloadButton)
+                        .addGap(8, 8, 8)))
+                .addContainerGap())
+        );
+        gameDialogLayout.setVerticalGroup(
+            gameDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(gameDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(gameDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(massDownloadButton)
+                    .addComponent(gameCancelButton))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -387,8 +410,7 @@ public class OffWiine extends javax.swing.JFrame {
 		File textFile = textFileBrowser.getSelectedFile();
 		textFileField.setText(textFile.getPath());
 		textFileField.setToolTipText(textFile.getPath());
-		textFileLocation = textFile.getName();
-		statusLabel.setText("Opened: " + textFileLocation + ".");
+		statusLabel.setText("Opened: " + textFileField.getText() + ".");
 		textFileRadio.setSelected(true);
 		gameChooseButton.setEnabled(true);
 	    } else {
@@ -410,7 +432,10 @@ public class OffWiine extends javax.swing.JFrame {
     }//GEN-LAST:event_textFileFieldKeyReleased
 
     private void gameChooseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gameChooseButtonActionPerformed
-	//parseFile();
+	if (evt.getSource() == gameChooseButton) {
+	    generateGameList();
+
+	}
     }//GEN-LAST:event_gameChooseButtonActionPerformed
 
     /** Starts the interface.
@@ -535,22 +560,29 @@ public class OffWiine extends javax.swing.JFrame {
     /** Parse a text file line by line, reading the game ID and game name
      *
      */
-    public String parseText() {
-	ReadWithScanner parser = new ReadWithScanner(textFileLocation);
+    public String generateGameList() {
+	ReadWithScanner parser = new ReadWithScanner(textFileField.getText());
 	log("Parsing text file...");
 	// Parse the text file, line by line, catching a FileNotFound Exception
 	try {
 	    parser.processLineByLine();
 	} catch (FileNotFoundException e2) {
-	    log("Error: " + textFileLocation + " not found");
+	    String returnString = "Error: " + textFileField.getText() + " not found";
+	    log(returnString);
+	    statusLabel.setText(returnString);
+	    return "0";
+	} catch (EmptyStackException ex) {
+	    statusLabel.setText("Error: IOException");
 	    return "0";
 	}
 	// Read the data from gameNames and return a string that is used for
 	// displaying the list in the frame, chooseGameFrame.
 	String returnString = parser.gameIDs.get(0);
-	for (int n = 1;n < parser.gameIDs.size();n++)
+	for (int n = 1;n < parser.gameIDs.size();n++) {
 	    returnString += "," + parser.gameIDs.get(n);
-	log(returnString);
+	    gameListModel.addElement(parser.gameIDs.get(n));
+	}
+	gameList.setModel(gameListModel);
 	log("Done.");
 	return returnString;
     }
@@ -609,16 +641,19 @@ public class OffWiine extends javax.swing.JFrame {
     private javax.swing.JFrame dialogFrame;
     private javax.swing.JButton downloadButton;
     private javax.swing.JFrame fileBrowserFrame;
+    private javax.swing.JButton gameCancelButton;
     private javax.swing.JButton gameChooseButton;
+    private javax.swing.JDialog gameDialog;
     private javax.swing.JLabel gameIDLabel;
     private javax.swing.JRadioButton gameIDRadio;
     private javax.swing.JTextField gameIDTextfield;
+    private javax.swing.JList gameList;
     private javax.swing.JLabel imageLabel1;
     private javax.swing.ButtonGroup inputTypeRadioGroup;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton massDownloadButton;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JFileChooser textFileBrowser;
     private javax.swing.JTextField textFileField;
